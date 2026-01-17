@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/page_route_utils.dart';
 import '../bloc/auth_bloc.dart';
+import '../../../user/presentation/bloc/user_bloc.dart';
 import '../../../user/presentation/pages/account_page.dart';
 import 'forget_password_page.dart';
 
@@ -52,6 +53,9 @@ class _SigninPageState extends State<SigninPage> {
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
+              // Save user profile to UserBloc
+              context.read<UserBloc>().add(SaveUser(state.userProfile));
+              // Navigate to account page
               Navigator.of(context).pushAndRemoveUntil(
                 createBlackPageRoute(const AccountPage()),
                 (route) => false,

@@ -21,23 +21,47 @@ class _AccountPageState extends State<AccountPage> {
   int _currentIndex = 4; // Settings tab is selected
 
   @override
+  void initState() {
+    super.initState();
+    // Load cached user when page is first displayed
+    context.read<UserBloc>().add(const LoadCachedUser());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return LogoutListener(
+    return MultiBlocListener(
+      listeners: [
+        // Listen to AuthBloc to save user when authenticated and handle logout
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthAuthenticated) {
+              // Save user profile to UserBloc
+              context.read<UserBloc>().add(SaveUser(state.userProfile));
+            } else if (state is AuthUnauthenticated) {
+              // Navigate to signin page on logout
+              Navigator.of(context).pushAndRemoveUntil(
+                createBlackPageRoute(const SigninPage()),
+                (route) => false,
+              );
+            }
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
-          'Account',
-          style: TextStyle(color: Colors.white),
+          backgroundColor: Colors.black,
+          title: const Text(
+            'Account',
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: false,
         ),
-        centerTitle: false,
-      ),
-      body: BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) {
-          if (state is UserLoaded && state.userProfile != null) {
-            final userProfile = state.userProfile!;
-            return SingleChildScrollView(
+        body: BlocBuilder<UserBloc, UserState>(
+            builder: (context, state) {
+              if (state is UserLoaded && state.userProfile != null) {
+                final userProfile = state.userProfile!;
+                return SingleChildScrollView(
               child: Column(
                 children: [
                   // Profile Section
@@ -143,11 +167,11 @@ class _AccountPageState extends State<AccountPage> {
                   const SizedBox(height: 20),
                 ],
               ),
-            );
-          }
-          return const AppSkeleton(isFullPage: true);
-        },
-      ),
+                );
+              }
+              return const AppSkeleton(isFullPage: true);
+            },
+          ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.grey[900],
@@ -209,7 +233,7 @@ class _AccountPageState extends State<AccountPage> {
           ],
         ),
       ),
-    ),
+      ),
     );
   }
 

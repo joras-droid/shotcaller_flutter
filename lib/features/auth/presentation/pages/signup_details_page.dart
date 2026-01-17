@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/utils/page_route_utils.dart';
 import '../bloc/auth_bloc.dart';
+import '../../../user/presentation/bloc/user_bloc.dart';
 import 'signin_page.dart';
 
 /// Sign Up Details Page - Fifth page (after OTP verification)
@@ -77,6 +78,8 @@ class _SignupDetailsPageState extends State<SignupDetailsPage> {
         child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
+              // Save user profile to UserBloc
+              context.read<UserBloc>().add(SaveUser(state.userProfile));
               Navigator.of(context).pushAndRemoveUntil(
                 createBlackPageRoute(const SigninPage()),
                 (route) => false,
