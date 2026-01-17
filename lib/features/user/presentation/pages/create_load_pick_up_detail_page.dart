@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shotcaller_app/common/widgets/app_snackbar.dart';
 
 class CreateLoadPickUpDetailPage extends StatefulWidget {
   const CreateLoadPickUpDetailPage({super.key});
@@ -69,13 +70,23 @@ class _CreateLoadPickUpDetailPageState
     );
 
     if (pickedDate != null) {
-      // Format the date as needed (e.g., 2026-01-17)
+      // Format the date as needed (2026/01/17)
       String formattedDate =
-          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+          "${pickedDate.year}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.day.toString().padLeft(2, '0')}";
 
       // Update the controller to reflect the selection in the UI
       _dateController.text = formattedDate;
     }
+  }
+
+  void onSubmit(){
+    if(_dateController.text.isEmpty || _selectedState?.isEmpty == true || _cityController.text.isEmpty) {
+      AppSnackbar.showError(context, "Pick up date, State/Province and City are required");
+      return;
+    }
+
+    AppSnackbar.showSuccess(context, "Field validation success, aba move to next page");
+
   }
 
   @override
@@ -145,7 +156,9 @@ class _CreateLoadPickUpDetailPageState
                     // Pickup Date
                     TextFormField(
                       controller: _dateController,
+                      textAlign: TextAlign.right,
                       readOnly: true,
+                      onTap: () => _selectDate(context),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -155,7 +168,7 @@ class _CreateLoadPickUpDetailPageState
                       decoration: InputDecoration(
                         labelText: 'Pickup Date',
                         hintText: 'YYYY-MM-DD',
-                        suffixIcon: IconButton(
+                        prefix: IconButton(
                           icon: const Icon(Icons.calendar_today),
                           onPressed: () => _selectDate(context),
                         ),
@@ -163,6 +176,7 @@ class _CreateLoadPickUpDetailPageState
                           color: Colors.white,
                           // fontSize: 24,
                           fontWeight: .bold,
+                          
                         ),
 
                         floatingLabelStyle: TextStyle(
@@ -238,6 +252,7 @@ class _CreateLoadPickUpDetailPageState
                         setState(() {
                           _selectedState = newValue;
                         });
+                        _updateProgress();
                       },
                       validator: (value) =>
                           value == null ? 'Please select a state' : null,
@@ -408,7 +423,7 @@ class _CreateLoadPickUpDetailPageState
                       overlayColor: Colors.white,
                     ),
 
-                    onPressed: () {},
+                    onPressed: onSubmit,
                     child: Text(
                       'Continue',
                       style: TextStyle(
