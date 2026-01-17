@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shotcaller_app/common/widgets/app_snackbar.dart';
+import 'package:shotcaller_app/features/user/presentation/pages/create_load_pick_up_detail_page.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/app_button.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/app_text_field.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/custom_app_bar.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/progress_bar.dart';
 
 class CreateLoadBrokerInfoPage extends StatefulWidget {
   const CreateLoadBrokerInfoPage({super.key});
@@ -45,28 +51,26 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
     });
   }
 
+  void onSubmit() {
+    if (_nameController.text.isEmpty ||
+        _phoneController.text.isEmpty ||
+        _emailController.text.isEmpty) {
+      AppSnackbar.showError(context, "Name, Phone and Email are required");
+      return;
+    }
+
+    Navigator.push(context, CreateLoadPickUpDetailPage.route());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
 
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.close, fontWeight: FontWeight.bold, color: Colors.white),
-            SizedBox(width: 10),
-            Text(
-              'Create Load',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
+      appBar: CustomAppBar(
+        leadingIcon: Icons.close,
+        iconPressed: () {},
+        title: 'Create Load',
       ),
       body: SafeArea(
         child: Stack(
@@ -80,22 +84,8 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TweenAnimationBuilder<double>(
-                      duration: const Duration(seconds: 1),
-                      curve: Curves.easeInOut,
-                      tween: Tween<double>(begin: 0, end: _progress),
-                      builder: (context, value, _) => ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          value: value,
-                          backgroundColor: Colors.grey[800],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                          minHeight: 6,
-                        ),
-                      ),
-                    ),
+                    ProgressBar(progressValue: _progress),
+
                     const SizedBox(height: 24),
 
                     Text(
@@ -110,81 +100,19 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
                     const SizedBox(height: 32),
 
                     // Broker Name
-                    TextFormField(
+                    AppTextField(
                       controller: _nameController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-
-                      decoration: InputDecoration(
-                        labelText: 'Broker Name',
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
-                        ),
-
-                        floatingLabelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFD4A574).withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFD4A574)),
-                        ),
-                      ),
-                      keyboardType: TextInputType.name,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the broker\'s name';
-                        }
-
-                        return null;
-                      },
+                      labelText: 'Broker Name',
+                      textInputType: .name,
                     ),
 
                     const SizedBox(height: 32),
 
                     // Broker Phone
-                    TextFormField(
+                    AppTextField(
                       controller: _phoneController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-
-                      decoration: InputDecoration(
-                        labelText: 'Broker Phone',
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
-                        ),
-                        floatingLabelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFD4A574).withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFD4A574)),
-                        ),
-                      ),
-                      keyboardType: TextInputType.name,
+                      labelText: 'Broker Phone',
+                      textInputType: .number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter the broker\'s phone';
@@ -197,37 +125,10 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
                     const SizedBox(height: 32),
 
                     // Broker Email
-                    TextFormField(
+                    AppTextField(
                       controller: _emailController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-
-                      decoration: InputDecoration(
-                        labelText: 'Broker Email',
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
-                        ),
-                        floatingLabelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFD4A574).withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFD4A574)),
-                        ),
-                      ),
-                      keyboardType: TextInputType.name,
+                      labelText: 'Broker Email',
+                      textInputType: .emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter the broker\'s email';
@@ -248,64 +149,7 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
               bottom: 0,
               left: 0,
               right: 0,
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  top: 24,
-                  bottom: 24,
-                ),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Color(0xFF1D1D1D),
-                  border: BorderDirectional(
-                    top: BorderSide(color: Color(0xFFA16D47)),
-                  ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-
-                // For Shadow, Container used
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(
-                          0xffA16D47,
-                        ).withOpacity(0.4), // Shadow color
-                        blurRadius: 15,
-                        spreadRadius: 2,
-                        offset: Offset.zero,
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 24,
-                        horizontal: 16,
-                      ),
-
-                      backgroundColor: Color(0xffA16D47),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(16),
-                      ),
-
-                      overlayColor: Colors.white,
-                    ),
-
-                    onPressed: () {},
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: .bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: AppButton(title: 'Continue', onPressed: onSubmit),
             ),
           ],
         ),

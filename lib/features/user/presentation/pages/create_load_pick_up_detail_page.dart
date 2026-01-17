@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:shotcaller_app/common/widgets/app_snackbar.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/app_button.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/app_text_field.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/custom_app_bar.dart';
+import 'package:shotcaller_app/features/user/presentation/widgets/progress_bar.dart';
 
 class CreateLoadPickUpDetailPage extends StatefulWidget {
+  static route() =>
+      MaterialPageRoute(builder: (context) => CreateLoadPickUpDetailPage());
+
   const CreateLoadPickUpDetailPage({super.key});
 
   @override
@@ -51,9 +58,8 @@ class _CreateLoadPickUpDetailPageState
   void _updateProgress() {
     int filledFields = 1;
     if (_dateController.text.isNotEmpty &&
-        _cityController.text.isNotEmpty && 
-        (_selectedState != null && _selectedState!.isNotEmpty)
-        )
+        _cityController.text.isNotEmpty &&
+        (_selectedState != null && _selectedState!.isNotEmpty))
       filledFields++;
 
     setState(() {
@@ -79,14 +85,21 @@ class _CreateLoadPickUpDetailPageState
     }
   }
 
-  void onSubmit(){
-    if(_dateController.text.isEmpty || _selectedState?.isEmpty == true || _cityController.text.isEmpty) {
-      AppSnackbar.showError(context, "Pick up date, State/Province and City are required");
+  void onSubmit() {
+    if (_dateController.text.isEmpty ||
+        _selectedState?.isEmpty == true ||
+        _cityController.text.isEmpty) {
+      AppSnackbar.showError(
+        context,
+        "Pick up date, State/Province and City are required",
+      );
       return;
     }
 
-    AppSnackbar.showSuccess(context, "Field validation success, aba move to next page");
-
+    AppSnackbar.showSuccess(
+      context,
+      "Field validation success, aba move to next page",
+    );
   }
 
   @override
@@ -94,24 +107,14 @@ class _CreateLoadPickUpDetailPageState
     return Scaffold(
       backgroundColor: Colors.black,
 
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.close, fontWeight: FontWeight.bold, color: Colors.white),
-            SizedBox(width: 10),
-            Text(
-              'Create Load',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
+      appBar: CustomAppBar(
+        leadingIcon: Icons.close,
+        iconPressed: () {
+          Navigator.pop(context);
+        },
+        title: 'Create Load',
       ),
+
       body: SafeArea(
         child: Stack(
           children: [
@@ -124,22 +127,7 @@ class _CreateLoadPickUpDetailPageState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TweenAnimationBuilder<double>(
-                      duration: const Duration(seconds: 1),
-                      curve: Curves.easeInOut,
-                      tween: Tween<double>(begin: 0, end: _progress),
-                      builder: (context, value, _) => ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: LinearProgressIndicator(
-                          value: value,
-                          backgroundColor: Colors.grey[800],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white,
-                          ),
-                          minHeight: 6,
-                        ),
-                      ),
-                    ),
+                    ProgressBar(progressValue: _progress),
                     const SizedBox(height: 24),
 
                     Text(
@@ -176,7 +164,6 @@ class _CreateLoadPickUpDetailPageState
                           color: Colors.white,
                           // fontSize: 24,
                           fontWeight: .bold,
-                          
                         ),
 
                         floatingLabelStyle: TextStyle(
@@ -215,12 +202,15 @@ class _CreateLoadPickUpDetailPageState
                         fontWeight: FontWeight.bold,
                       ),
                       dropdownColor: Color(0xff444444),
-                      
+
                       decoration: InputDecoration(
                         labelText: 'State/Province',
                         hintText: 'YYYY-MM-DD',
-                        suffixIcon: const Icon(Icons.arrow_drop_down_rounded, size: 30,),
-                        
+                        suffixIcon: const Icon(
+                          Icons.arrow_drop_down_rounded,
+                          size: 30,
+                        ),
+
                         labelStyle: const TextStyle(
                           color: Colors.white,
                           // fontSize: 24,
@@ -261,113 +251,31 @@ class _CreateLoadPickUpDetailPageState
                     const SizedBox(height: 32),
 
                     // City
-                    TextFormField(
+                    AppTextField(
                       controller: _cityController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-
-                      decoration: InputDecoration(
-                        labelText: 'City',
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
-                        ),
-                        floatingLabelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFD4A574).withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFD4A574)),
-                        ),
-                      ),
-                      keyboardType: TextInputType.text,
-                      
+                      labelText: 'City',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'City must be provided';
+                        }
+                        return null;
+                      },
                     ),
 
-                    const SizedBox(height: 32,),
-
+                    const SizedBox(height: 32),
 
                     // Street Address (Optional)
-                    TextFormField(
+                    AppTextField(
                       controller: _streetAddressController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-
-                      decoration: InputDecoration(
-                        labelText: 'Street Address (Optional)',
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
-                        ),
-                        floatingLabelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFD4A574).withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFD4A574)),
-                        ),
-                      ),
-                      keyboardType: TextInputType.text,
-                      
+                      labelText: 'Street Address (Optional)',
                     ),
 
                     const SizedBox(height: 32),
 
                     // Zip Code (Optional)
-                    TextFormField(
+                    AppTextField(
                       controller: _zipCodeController,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-
-                      decoration: InputDecoration(
-                        labelText: 'Zip Code (Optional)',
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
-                        ),
-                        floatingLabelStyle: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: const Color(0xFFD4A574).withOpacity(0.5),
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFFD4A574)),
-                        ),
-                      ),
-                      keyboardType: TextInputType.text,
-                      
+                      labelText: 'Zip Code (Optional)',
                     ),
                   ],
                 ),
@@ -377,64 +285,7 @@ class _CreateLoadPickUpDetailPageState
               bottom: 0,
               left: 0,
               right: 0,
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  top: 24,
-                  bottom: 24,
-                ),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Color(0xFF1D1D1D),
-                  border: BorderDirectional(
-                    top: BorderSide(color: Color(0xFFA16D47)),
-                  ),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-
-                // For Shadow, Container used
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(
-                          0xffA16D47,
-                        ).withOpacity(0.4), // Shadow color
-                        blurRadius: 15,
-                        spreadRadius: 2,
-                        offset: Offset.zero,
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 24,
-                        horizontal: 16,
-                      ),
-
-                      backgroundColor: Color(0xffA16D47),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(16),
-                      ),
-
-                      overlayColor: Colors.white,
-                    ),
-
-                    onPressed: onSubmit,
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: .bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: AppButton(title: 'Continue', onPressed: onSubmit),
             ),
           ],
         ),
