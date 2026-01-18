@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:shotcaller_app/common/widgets/app_snackbar.dart';
-import 'package:shotcaller_app/features/user/presentation/pages/create_load_delivery_detail_page.dart';
+import 'package:shotcaller_app/features/user/presentation/pages/create_load_pay_and_terms_page.dart';
 import 'package:shotcaller_app/features/user/presentation/widgets/app_button.dart';
 import 'package:shotcaller_app/features/user/presentation/widgets/app_text_field.dart';
 import 'package:shotcaller_app/features/user/presentation/widgets/custom_app_bar.dart';
 import 'package:shotcaller_app/features/user/presentation/widgets/progress_bar.dart';
 
-class CreateLoadPickUpDetailPage extends StatefulWidget {
+class CreateLoadDeliveryDetailPage extends StatefulWidget {
   static route() =>
-      MaterialPageRoute(builder: (context) => CreateLoadPickUpDetailPage());
+      MaterialPageRoute(builder: (context) => CreateLoadDeliveryDetailPage());
 
-  const CreateLoadPickUpDetailPage({super.key});
+  const CreateLoadDeliveryDetailPage({super.key});
 
   @override
-  State<CreateLoadPickUpDetailPage> createState() =>
-      _CreateLoadPickUpDetailPageState();
+  State<CreateLoadDeliveryDetailPage> createState() =>
+      _CreateLoadDeliveryDetailPageState();
 }
 
-class _CreateLoadPickUpDetailPageState
-    extends State<CreateLoadPickUpDetailPage> {
+class _CreateLoadDeliveryDetailPageState
+    extends State<CreateLoadDeliveryDetailPage> {
   final TextEditingController _dateController = .new();
   // final TextEditingController _stateController = .new();
   final TextEditingController _cityController = .new();
@@ -38,7 +38,7 @@ class _CreateLoadPickUpDetailPageState
     'Sudurpaschim',
   ];
 
-  double _progress = 1 / 7;
+  double _progress = 2 / 7;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _CreateLoadPickUpDetailPageState
   }
 
   void _updateProgress() {
-    int filledFields = 1;
+    int filledFields = 2;
     if (_dateController.text.isNotEmpty &&
         _cityController.text.isNotEmpty &&
         (_selectedState != null && _selectedState!.isNotEmpty))
@@ -97,7 +97,7 @@ class _CreateLoadPickUpDetailPageState
       return;
     }
 
-    Navigator.push(context, CreateLoadDeliveryDetailPage.route());
+    Navigator.push(context, CreateLoadPayAndTermsPage.route());
   }
 
   @override
@@ -129,7 +129,7 @@ class _CreateLoadPickUpDetailPageState
                     const SizedBox(height: 24),
 
                     Text(
-                      "Pick Up Details",
+                      "Delivery Details",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 32,
