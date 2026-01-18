@@ -8,6 +8,7 @@ class AppTextField extends StatelessWidget {
   final String labelText;
   final String? Function(String?)? validator;
   final TextInputType? textInputType;
+  final Widget? suffix;
 
   const AppTextField({
     Key? key,
@@ -15,6 +16,7 @@ class AppTextField extends StatelessWidget {
     required this.labelText,
     this.validator,
     this.textInputType,
+    this.suffix,
   }) : super(key: key);
 
   @override
@@ -48,6 +50,10 @@ class AppTextField extends StatelessWidget {
         ),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Color(0xFFD4A574)),
+        ),
+        suffixIcon: Column(
+          mainAxisAlignment: .center,
+          children: [suffix ?? Text('')],
         ),
       ),
       keyboardType: textInputType,
