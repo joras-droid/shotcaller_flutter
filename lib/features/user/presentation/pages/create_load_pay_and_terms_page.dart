@@ -67,7 +67,8 @@ class _CreateLoadPayAndTermsPageState extends State<CreateLoadPayAndTermsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
+      // CRITICAL: Keeps the button from jumping up when keyboard appears
+      resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
         leadingIcon: Icons.close,
         iconPressed: () {
@@ -75,23 +76,21 @@ class _CreateLoadPayAndTermsPageState extends State<CreateLoadPayAndTermsPage> {
         },
         title: 'Create Load',
       ),
-
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 24,
-                ),
+            // 1. Scrollable Content Area
+            Expanded(
+              child: SingleChildScrollView(
+                // Large bottom padding allows the user to scroll fields
+                // high enough to be seen above the keyboard
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 300),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ProgressBar(progressValue: _progress),
                     const SizedBox(height: 24),
-
-                    Text(
+                    const Text(
                       "Pay & Terms",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -99,14 +98,13 @@ class _CreateLoadPayAndTermsPageState extends State<CreateLoadPayAndTermsPage> {
                         color: Colors.white,
                       ),
                     ),
-
                     const SizedBox(height: 32),
 
                     // Per Mile Rate Amount(USD)
                     AppTextField(
                       controller: _rateController,
                       labelText: 'Per Mile Rate Amount(USD)',
-                      textInputType: .number,
+                      textInputType: TextInputType.number,
                     ),
 
                     const SizedBox(height: 32),
@@ -115,7 +113,8 @@ class _CreateLoadPayAndTermsPageState extends State<CreateLoadPayAndTermsPage> {
                     AppTextField(
                       controller: _distanceController,
                       labelText: 'Miles',
-                      suffix: Text(
+                      textInputType: TextInputType.number,
+                      suffix: const Text(
                         'mi',
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
@@ -131,12 +130,9 @@ class _CreateLoadPayAndTermsPageState extends State<CreateLoadPayAndTermsPage> {
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: AppButton(title: 'Continue', onPressed: onSubmit),
-            ),
+
+            // 2. Fixed Bottom Button
+            AppButton(title: 'Continue', onPressed: onSubmit),
           ],
         ),
       ),

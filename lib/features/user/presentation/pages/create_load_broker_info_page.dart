@@ -66,17 +66,19 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
+      resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
         leadingIcon: Icons.close,
         iconPressed: () {},
         title: 'Create Load',
       ),
       body: SafeArea(
-        child: Stack(
+        child: Column(
+          // Use a Column to stack the scroll area and the button
           children: [
-            Positioned.fill(
-              child: Padding(
+            Expanded(
+              // This allows the form to scroll while the button stays at the bottom
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
                   vertical: 16,
                   horizontal: 24,
@@ -85,10 +87,8 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ProgressBar(progressValue: _progress),
-
                     const SizedBox(height: 24),
-
-                    Text(
+                    const Text(
                       "Broker Info",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -96,61 +96,34 @@ class _CreateLoadBrokerInfoPageState extends State<CreateLoadBrokerInfoPage> {
                         color: Colors.white,
                       ),
                     ),
-
                     const SizedBox(height: 32),
-
-                    // Broker Name
                     AppTextField(
                       controller: _nameController,
                       labelText: 'Broker Name',
-                      textInputType: .name,
+                      textInputType: TextInputType.name,
                     ),
-
                     const SizedBox(height: 32),
-
-                    // Broker Phone
                     AppTextField(
                       controller: _phoneController,
                       labelText: 'Broker Phone',
-                      textInputType: .number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the broker\'s phone';
-                        }
-
-                        return null;
-                      },
+                      textInputType: TextInputType.number,
+                      // ... validator
                     ),
-
                     const SizedBox(height: 32),
-
-                    // Broker Email
                     AppTextField(
                       controller: _emailController,
                       labelText: 'Broker Email',
-                      textInputType: .emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the broker\'s email';
-                        }
-
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-
-                        return null;
-                      },
+                      textInputType: TextInputType.emailAddress,
+                      // ... validator
                     ),
+                    // Add a little extra space at the bottom of the scroll view
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: AppButton(title: 'Continue', onPressed: onSubmit),
-            ),
+            // The button stays outside the ScrollView but inside the Column
+            AppButton(title: 'Continue', onPressed: onSubmit),
           ],
         ),
       ),

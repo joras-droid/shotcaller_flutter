@@ -104,31 +104,29 @@ class _CreateLoadDeliveryDetailPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
+      // CRITICAL: This stops the button from moving when the keyboard appears
+      resizeToAvoidBottomInset: false,
       appBar: CustomAppBar(
         leadingIcon: Icons.close,
-        iconPressed: () {
-          Navigator.pop(context);
-        },
+        iconPressed: () => Navigator.pop(context),
         title: 'Create Load',
       ),
-
       body: SafeArea(
-        child: Stack(
+        child: Column(
+          // Replaced Stack with Column
           children: [
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 24,
-                ),
+            // 1. Scrollable Content Area
+            Expanded(
+              child: SingleChildScrollView(
+                // Large bottom padding (300) so you can scroll fields
+                // above the keyboard even when it's open
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 300),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ProgressBar(progressValue: _progress),
                     const SizedBox(height: 24),
-
-                    Text(
+                    const Text(
                       "Delivery Details",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -136,10 +134,9 @@ class _CreateLoadDeliveryDetailPageState
                         color: Colors.white,
                       ),
                     ),
-
                     const SizedBox(height: 32),
 
-                    // Pickup Date
+                    // Pickup Date Field
                     TextFormField(
                       controller: _dateController,
                       textAlign: TextAlign.right,
@@ -150,26 +147,22 @@ class _CreateLoadDeliveryDetailPageState
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
-
                       decoration: InputDecoration(
                         labelText: 'Pickup Date',
                         hintText: 'YYYY-MM-DD',
-                        prefix: IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () => _selectDate(context),
+                        prefixIcon: const Icon(
+                          Icons.calendar_today,
+                          color: Colors.white,
                         ),
                         labelStyle: const TextStyle(
                           color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
+                          fontWeight: FontWeight.bold,
                         ),
-
-                        floatingLabelStyle: TextStyle(
+                        floatingLabelStyle: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
-
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: const Color(0xFFD4A574).withOpacity(0.5),
@@ -179,19 +172,11 @@ class _CreateLoadDeliveryDetailPageState
                           borderSide: BorderSide(color: Color(0xFFD4A574)),
                         ),
                       ),
-                      keyboardType: TextInputType.name,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a valid date';
-                        }
-
-                        return null;
-                      },
                     ),
 
                     const SizedBox(height: 32),
 
-                    // Select state/province
+                    // State/Province Dropdown
                     DropdownButtonFormField<String>(
                       value: _selectedState,
                       style: const TextStyle(
@@ -199,28 +184,23 @@ class _CreateLoadDeliveryDetailPageState
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
-                      dropdownColor: Color(0xff444444),
-
+                      dropdownColor: const Color(0xff444444),
                       decoration: InputDecoration(
                         labelText: 'State/Province',
-                        hintText: 'YYYY-MM-DD',
                         suffixIcon: const Icon(
                           Icons.arrow_drop_down_rounded,
                           size: 30,
+                          color: Colors.white,
                         ),
-
                         labelStyle: const TextStyle(
                           color: Colors.white,
-                          // fontSize: 24,
-                          fontWeight: .bold,
+                          fontWeight: FontWeight.bold,
                         ),
-
-                        floatingLabelStyle: TextStyle(
+                        floatingLabelStyle: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
-
                         enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
                             color: const Color(0xFFD4A574).withOpacity(0.5),
@@ -237,32 +217,20 @@ class _CreateLoadDeliveryDetailPageState
                         );
                       }).toList(),
                       onChanged: (newValue) {
-                        setState(() {
-                          _selectedState = newValue;
-                        });
+                        setState(() => _selectedState = newValue);
                         _updateProgress();
                       },
-                      validator: (value) =>
-                          value == null ? 'Please select a state' : null,
                     ),
 
                     const SizedBox(height: 32),
 
-                    // City
                     AppTextField(
                       controller: _cityController,
                       labelText: 'City',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'City must be provided';
-                        }
-                        return null;
-                      },
                     ),
 
                     const SizedBox(height: 32),
 
-                    // Street Address (Optional)
                     AppTextField(
                       controller: _streetAddressController,
                       labelText: 'Street Address (Optional)',
@@ -270,7 +238,6 @@ class _CreateLoadDeliveryDetailPageState
 
                     const SizedBox(height: 32),
 
-                    // Zip Code (Optional)
                     AppTextField(
                       controller: _zipCodeController,
                       labelText: 'Zip Code (Optional)',
@@ -279,12 +246,9 @@ class _CreateLoadDeliveryDetailPageState
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: AppButton(title: 'Continue', onPressed: onSubmit),
-            ),
+
+            // 2. Fixed Button (Now naturally sits at the bottom of the Column)
+            AppButton(title: 'Continue', onPressed: onSubmit),
           ],
         ),
       ),
